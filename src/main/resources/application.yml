@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:9090}
+  port: ${PORT:9000}
 spring:
   application:
     name: api-gateway
@@ -7,7 +7,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://127.0.0.1:9000
+          issuer-uri: http://127.0.0.1:9001
       client:
         registration:
           client-app:
@@ -15,30 +15,32 @@ spring:
             client-id: gateway
             client-secret: ${CLIENT_SECRET}
             authorization-grant-type: authorization_code
-            redirect-uri: http://127.0.0.1:9090/authorized
+            redirect-uri: http://127.0.0.1:9000/authorized
             scope:
               - openid
               - profile
             client-name: client-app
         provider:
           spring:
-            issuer-uri: http://127.0.0.1:9000
+            issuer-uri: http://127.0.0.1:9001
   cloud:
     gateway:
-      routes:
-        - id: authentication
-          uri: lb://authentication
-          predicates:
-            - Path=/gateway/authentication/**
-          filters:
-            - StripPrefix=2
-        - id: users
-          uri: lb://users-service
-          predicates:
-            - Path=/gateway/users/**
-          filters:
-            - StripPrefix=2
+      server:
+        webflux:
+          routes:
+            - id: authentication
+              uri: lb://authentication
+              predicates:
+                - Path=/gateway/authentication/**
+              filters:
+                - StripPrefix=2
+            - id: users
+              uri: lb://users-service
+              predicates:
+                - Path=/gateway/users/**
+              filters:
+                - StripPrefix=2
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:${EUREKA_PORT}/eureka/
