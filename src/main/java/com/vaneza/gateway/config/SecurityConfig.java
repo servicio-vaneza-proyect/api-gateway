@@ -27,7 +27,7 @@ public class SecurityConfig {
   SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
     return http.authorizeExchange(auth -> auth.pathMatchers("/authorized", "/logout").permitAll()
             .pathMatchers("/gateway/users/**")
-            .hasAnyRole(Constants.ROLE)
+            .hasAnyRole(Constants.ROLE_ADMIN)
             .anyExchange().authenticated())
         .cors(ServerHttpSecurity.CorsSpec::disable)
         .csrf(ServerHttpSecurity.CsrfSpec::disable)
